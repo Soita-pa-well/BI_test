@@ -6,8 +6,10 @@ from dotenv import load_dotenv
 # from airflow.decorators import task
 
 
-university_url = 'https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json'
-
+university_url = (
+    'https://raw.githubusercontent.com/Hipo/'
+    'university-domains-list/master/world_universities_and_domains.json'
+)
 response = requests.get(university_url)
 
 data = response.json()
@@ -48,9 +50,10 @@ for institute in data:
         insitute_type = 'University'
     else:
         insitute_type = 'None'
-    
+
     query = '''
-    INSERT INTO institutions (name, country, alpha_two_code, state_province, type)
+    INSERT INTO institutions (name, country, alpha_two_code, state_province,
+                              type)
     VALUES (%s, %s, %s, %s, %s)
     '''
 
