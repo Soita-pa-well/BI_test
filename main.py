@@ -1,5 +1,6 @@
 import requests
 import psycopg2
+from dotenv import load_dotenv
 from airflow import DAG
 from airflow.decorators import task
 
@@ -9,6 +10,8 @@ university_url = 'https://raw.githubusercontent.com/Hipo/university-domains-list
 response = requests.get(university_url)
 
 data = response.json()
+
+load_dotenv()
 
 conn = psycopg2.connect(
     dbname="postgres",
@@ -28,7 +31,8 @@ CREATE TABLE institutions (
     web_pages TEXT[],
     country TEXT,
     alpha_two_code CHAR(2),
-    state_province TEXT
+    state_province TEXT,
+    type TEXT
 );
 '''
 
