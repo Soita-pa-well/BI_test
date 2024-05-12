@@ -26,19 +26,30 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 
-create_table_query = '''
-CREATE TABLE institutions (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    country TEXT,
-    alpha_two_code CHAR(2),
-    state_province TEXT,
-    type TEXT
-);
-'''
+cur.execute(
+    "SELECT EXISTS ("
+    "SELECT 1 "
+    "FROM information_schema.tables "
+    "WHERE table_name = 'institutions'"
+    ")"
+)
 
-cur.execute(create_table_query)
-conn.commit()
+table_exists = cur.fetchone()[0]
+
+if not table_exists:
+    create_table_query = '''
+    CREATE TABLE institutions (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        country TEXT,
+        alpha_two_code CHAR(2),
+        state_province TEXT,
+        type TEXT
+    );
+    '''
+
+    cur.execute(create_table_query)
+    conn.commit()
 
 for institute in data:
     insitute_type = ''
