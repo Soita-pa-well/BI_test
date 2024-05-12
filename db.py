@@ -1,18 +1,26 @@
 import os
 import psycopg2
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def connect_to_database():
     load_dotenv()
-    conn = psycopg2.connect(
-        dbname=os.getenv('DB_NAME'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('PASSWORD'),
-        host=os.getenv('HOST'),
-        port=os.getenv('PORT'),
-    )
-    return conn
+    try:
+        conn = psycopg2.connect(
+            dbname=os.getenv('DB_NAME'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('PASSWORD'),
+            host=os.getenv('HOST'),
+            port=os.getenv('PORT'),
+        )
+        logging.info('Подключение к БД успешно')
+        return conn
+    except Exception as e:
+        logging.error(f'Ошибка подключения к БД: {str(e)}')
+        raise
 
 
 def check_table_existence(cur):
@@ -38,5 +46,10 @@ def create_table(cur, conn):
         type TEXT
     );
     '''
-    cur.execute(create_table_query)
-    conn.commit()
+    try:
+        cur.execute(create_table_query)
+        conn.commit()
+        logging.info("Создана таблица 'institutions'")
+    except Exception as e:
+        logging.error(f'Ошибка при создании таблицы: {str(e)}')
+        raise

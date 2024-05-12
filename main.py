@@ -1,10 +1,11 @@
-import schedule
-import time
+# import schedule
+# import time
 from api import get_info
 from db import connect_to_database, check_table_existence, create_table
 from constance import UNIVERSE_URL
-# from airflow import DAG
-# from airflow.decorators import task
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 conn = connect_to_database()
 cur = conn.cursor()
@@ -64,7 +65,7 @@ def main():
                 )
                 cur.execute(update_query, update_params)
                 conn.commit()
-
+                logging.info(f"Запись {institute['name']} изменена")
         else:
             query = '''
             INSERT INTO institutions (
@@ -82,20 +83,21 @@ def main():
                       insitute_type)
             cur.execute(query, params)
             conn.commit()
+            logging.info(f"Добавлена новая запись {institute['name']}")
 
     cur.close()
     conn.close()
 
 
-def run_daily_job():
-    main()
+# def run_daily_job():
+#     main()
 
 
-schedule.every().day.at("03:00").do(run_daily_job)
+# schedule.every().day.at("03:00").do(run_daily_job)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
-    while True:
-        schedule.run_pending()
-        time.sleep(300)
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(300)
