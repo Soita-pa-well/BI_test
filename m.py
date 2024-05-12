@@ -1,56 +1,20 @@
-import requests
-import psycopg2
-import os
-from dotenv import load_dotenv
+from api import get_info
+from db import connect_to_database, check_table_existence, create_table
 # from airflow import DAG
 # from airflow.decorators import task
 
+conn = connect_to_database()
+cur = conn.cursor()
+
+if not check_table_existence(cur):
+    create_table(cur, conn)
 
 university_url = (
     'https://raw.githubusercontent.com/Hipo/'
     'university-domains-list/master/world_universities_and_domains.json'
 )
-response = requests.get(university_url)
 
-data = response.json()
-
-load_dotenv()
-
-conn = psycopg2.connect(
-    dbname=os.getenv('DB_NAME'),
-    user=os.getenv('DB_USER'),
-    password=os.getenv('PASSWORD'),
-    host=os.getenv('HOST'),
-    port=os.getenv('PORT'),
-)
-
-cur = conn.cursor()
-
-cur.execute(
-    "SELECT EXISTS ("
-    "SELECT 1 "
-    "FROM information_schema.tables "
-    "WHERE table_name = 'institutions'"
-    ")"
-)
-
-table_exists = cur.fetchone()[0]
-
-if not table_exists:
-    create_table_query = '''
-    CREATE TABLE institutions (
-        id SERIAL PRIMARY KEY,
-        name TEXT,
-        country TEXT,
-        alpha_two_code CHAR(2),
-        state_province TEXT,
-        type TEXT
-    );
-    '''
-
-    cur.execute(create_table_query)
-    conn.commit()
-
+data = get_info(university_url)
 for institute in data:
     insitute_type = ''
     if 'Institute' in institute['name']:
@@ -121,3 +85,6 @@ for institute in data:
 
 cur.close()
 conn.close()
+
+# if __name__ == "__main__":
+#     main()
