@@ -14,7 +14,7 @@ default_args = {
 }
 
 dag = DAG(
-    'institute_dag',
+    dag_id='institute_dag',
     default_args=default_args,
     description='DAG для запуска скрипта',
     schedule_interval='0 3 * * *',
