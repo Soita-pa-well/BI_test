@@ -2,7 +2,7 @@
 # import time
 from api import get_info
 from db import connect_to_database, check_table_existence, create_table
-from constance import UNIVERSE_URL
+from constants import UNIVERSE_URL
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -84,7 +84,7 @@ def main():
             cur.execute(query, params)
             conn.commit()
             logging.info(f"Добавлена новая запись {institute['name']}")
-
+    logging.info('Таблица обновлена успешно')
     cur.close()
     conn.close()
 
@@ -95,8 +95,8 @@ def main():
 
 # schedule.every().day.at("03:00").do(run_daily_job)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 #     while True:
 #         schedule.run_pending()
