@@ -34,7 +34,7 @@ def main():
         if existing_record:
             (ex_id, existing_name, existing_country, existing_alpha,
              existing_state, existing_type) = existing_record
-            
+
             name_changed = existing_name != institute['name']
             country_changed = existing_country != institute['country']
             alpha_changed = existing_alpha != institute['alpha_two_code']
@@ -88,5 +88,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

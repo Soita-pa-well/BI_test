@@ -5,6 +5,7 @@ from main import main
 from tasks.connect_and_create_table import connect_and_create_table
 from tasks.start_task import start
 from tasks.finish_task import finish
+from tasks.get_info_task import get_info
 
 default_args = {
     'owner': 'airflow',
@@ -27,13 +28,19 @@ start_task = PythonOperator(
     task_id='start_task',
     python_callable=start,
     show_return_value_in_logs=True,
-    dag=dag 
+    dag=dag
 
 )
 
 create_db_task = PythonOperator(
     task_id='create_db_task',
     python_callable=connect_and_create_table,
+    dag=dag
+)
+
+get_info_task = PythonOperator(
+    task_id='get_info_task ',
+    python_callable=get_info,
     dag=dag
 )
 
@@ -50,4 +57,4 @@ finish_task = PythonOperator(
     dag=dag)
 
 
-start_task >> create_db_task >> institute_task >> finish_task
+start_task >> create_db_task >> get_info_task >> institute_task >> finish_task
