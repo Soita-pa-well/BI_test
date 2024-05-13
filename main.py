@@ -1,8 +1,5 @@
-# import schedule
-# import time
 from api import get_info
 from db import connect_to_database, check_table_existence, create_table
-from constants import UNIVERSE_URL
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +12,7 @@ if not check_table_existence(cur):
 
 
 def main():
-    data = get_info(UNIVERSE_URL)
+    data = get_info()
     for institute in data:
         insitute_type = ''
         if 'Institute' in institute['name']:
@@ -89,15 +86,7 @@ def main():
     conn.close()
 
 
-# def run_daily_job():
-#     main()
-
-
-# schedule.every().day.at("03:00").do(run_daily_job)
-
 if __name__ == "__main__":
     main()
 
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(300)
+
