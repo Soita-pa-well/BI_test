@@ -1,11 +1,14 @@
+from datetime import datetime, timedelta
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
-from main import main
+
 from tasks.connect_and_create_table import connect_and_create_table
 from tasks.start_task import start
 from tasks.finish_task import finish
 from tasks.get_info_task import get_info
+from tasks.transform_info import info_transformation
+from tasks.load_info_task import load_info
 
 default_args = {
     'owner': 'airflow',
@@ -32,21 +35,27 @@ start_task = PythonOperator(
 
 )
 
-create_db_task = PythonOperator(
-    task_id='create_db_task',
-    python_callable=connect_and_create_table,
-    dag=dag
-)
-
 get_info_task = PythonOperator(
     task_id='get_info_task ',
     python_callable=get_info,
     dag=dag
 )
 
-institute_task = PythonOperator(
-    task_id='institute_task',
-    python_callable=main,
+transformation_info_task = PythonOperator(
+    task_id='transformation_info_task',
+    python_callable=info_transformation,
+    dag=dag
+)
+
+load_info_task = PythonOperator(
+    task_id='load_info_task',
+    python_callable=load_info,
+    dag=dag
+)
+
+create_db_task = PythonOperator(
+    task_id='create_db_task',
+    python_callable=connect_and_create_table,
     dag=dag
 )
 
@@ -56,5 +65,9 @@ finish_task = PythonOperator(
     show_return_value_in_logs=True,
     dag=dag)
 
-
-start_task >> create_db_task >> get_info_task >> institute_task >> finish_task
+start_task >> \
+    get_info_task >> \
+    transformation_info_task >> \
+    load_info_task >> \
+    create_db_task >> \
+    finish_task

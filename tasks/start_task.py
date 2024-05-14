@@ -3,5 +3,5 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-def start():
+def start() -> None:
     logging.info('Сервис начал работу')

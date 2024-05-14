@@ -1,15 +1,17 @@
+from typing import List
+
 from get_info_task import get_info
 from university_models import University
 
 
-def info_transformation():
+def info_transformation() -> List[University]:
     data = get_info()
     university_type = {
         'Institute': 'Institute',
         'College': 'College',
         'University': 'University'
     }
-    universities = [
+    universities_list = [
         University(
             country=item['country'],
             alpha_two_code=item['alpha_two_code'],
@@ -19,4 +21,4 @@ def info_transformation():
                       if i in item['name']), None)
         ) for item in data
     ]
-    return universities
+    return universities_list
