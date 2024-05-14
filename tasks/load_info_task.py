@@ -1,14 +1,16 @@
 import logging
 
+from airflow.models.taskinstance import TaskInstance
+
 from connect_and_create_table import connect_and_create_table
-from transform_info import info_transformation
 
 
 logging.basicConfig(level=logging.INFO)
 
 
-def load_info() -> None:
-    data = info_transformation()
+def load_info(**kwargs) -> None:
+    ti: TaskInstance = kwargs['ti']
+    data = ti.xcom_pull(task_ids='transformation_info_task')
     conn = connect_and_create_table()
     cur = conn.cursor()
 
@@ -79,6 +81,3 @@ def load_info() -> None:
     logging.info('Таблица обновлена успешно')
     cur.close()
     conn.close()
-
-
-load_info()

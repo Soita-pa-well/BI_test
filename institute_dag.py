@@ -35,17 +35,26 @@ start_task = PythonOperator(
 
 )
 
+create_db_task = PythonOperator(
+    task_id='create_db_task',
+    python_callable=connect_and_create_table,
+    dag=dag
+)
+
 get_info_task = PythonOperator(
-    task_id='get_info_task ',
+    task_id='get_info_task',
     python_callable=get_info,
+    provide_context=True,
     dag=dag
 )
 
 transformation_info_task = PythonOperator(
     task_id='transformation_info_task',
     python_callable=info_transformation,
+    provide_context=True,
     dag=dag
 )
+
 
 load_info_task = PythonOperator(
     task_id='load_info_task',
@@ -53,11 +62,6 @@ load_info_task = PythonOperator(
     dag=dag
 )
 
-create_db_task = PythonOperator(
-    task_id='create_db_task',
-    python_callable=connect_and_create_table,
-    dag=dag
-)
 
 finish_task = PythonOperator(
     task_id='finish_task',
@@ -66,8 +70,8 @@ finish_task = PythonOperator(
     dag=dag)
 
 start_task >> \
+    create_db_task >> \
     get_info_task >> \
     transformation_info_task >> \
     load_info_task >> \
-    create_db_task >> \
     finish_task

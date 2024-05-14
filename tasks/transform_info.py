@@ -1,11 +1,13 @@
 from typing import List
 
-from get_info_task import get_info
+from airflow.models.taskinstance import TaskInstance
+
 from university_models import University
 
 
-def info_transformation() -> List[University]:
-    data = get_info()
+def info_transformation(**kwargs) -> List[University]:
+    ti: TaskInstance = kwargs['ti']
+    data: list[dict] = ti.xcom_pull(task_ids='get_info_task')
     university_type = {
         'Institute': 'Institute',
         'College': 'College',
